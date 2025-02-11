@@ -11,6 +11,9 @@
 import socket
 import sys
 
+# Source: https://realpython.com/python-sockets/
+HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
+PORT = 65432  # Port to listen on (non-privileged ports are > 1023)
 
 # Validate input
 if len(sys.argv) != 2:
@@ -21,6 +24,15 @@ if sys.argv[1].isdigit() == False:
     exit(1)
 
 size_mb = int(sys.argv[1])
+if (size_mb < 25 or size_mb > 200):
+    print("size must be between 25 and 200")
+    exit(1)
 
 
+# Generate payload of size "size_mb"
+payload = bytearray(size_mb * 1000)
+for i in range(size_mb * 1000): # For fun, fill this with lowercase alphabet
+    payload[i] = 97 + (i % 26)
+payload_bstr = ''.join(format(byte, '08b') for byte in payload)
+assert len(payload_bstr) == size_mb / 8000 # 8000 bits per megabyte
 
