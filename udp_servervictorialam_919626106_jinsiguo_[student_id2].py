@@ -18,6 +18,8 @@ src_addr = 0
 print("Server is receiving data now...")
 while True:
     data, src_addr = sock_udp.recvfrom(4096) # BLOCKING function call
+    if data == b"STOP": 
+        break
     now = time.time()
     if times[0] != 0: # If this not is the first record (this is scuffed, i know LOL)
         sizes.append(len(data)) # Record number of bytes sent after first "correct" time recorded
@@ -26,8 +28,7 @@ while True:
         times[0] = now
         print(f"Time that first packet was received: {time.time()}")
 
-    if data == b"STOP": 
-        break
+    
 
     payload.append(data.decode())
 
