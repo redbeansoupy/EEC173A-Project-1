@@ -37,7 +37,7 @@ while True:
 total_data = sum(sizes)
 total_time = times[1] - times[0]
 throughput = total_data / total_time
-msg_str = f"Throughput: {(throughput / 1000000):.3f} Megabytes per second"
+msg_str = f"Throughput: {(throughput / 1000):.3f} Kilobytes per second"
 
 sock_udp.sendto(msg_str.encode(), src_addr)
 # print("total_data: ", total_data)
