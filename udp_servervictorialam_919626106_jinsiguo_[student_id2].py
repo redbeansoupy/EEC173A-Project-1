@@ -13,6 +13,7 @@ sock_udp.bind((SERVER_IP, SERVER_PORT))
 
 times = [0, 0]
 sizes = []
+payload = []
 src_addr = 0
 print("Server is receiving data now...")
 while True:
@@ -23,9 +24,12 @@ while True:
         times[1] = now
     else:
         times[0] = now
+        print(f"Time that first packet was received: {time.time()}")
 
-    if len(sizes) > 10000: # Enough samples!
+    if data == b"STOP": 
         break
+
+    payload.append(data.decode())
 
 # Measure throughput and send back to client
 total_data = sum(sizes)
@@ -37,4 +41,10 @@ sock_udp.sendto(msg_str.encode(), src_addr)
 # print("total_data: ", total_data)
 # print("total_time: ", total_time)
 
-print("Completed execution iPerfectly!")
+print("Data received: ")
+print(''.join(payload), end="\n\n")
+print("Client IP address: ", src_addr[0])
+print("Size of data received (bytes): ", total_data)
+print("Time taken to receive (seconds): ", total_time)
+
+print("Server process completed iPerfectly!")

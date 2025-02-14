@@ -40,7 +40,8 @@ for i in range(size_mb * 1000000): # For fun, fill this with lowercase alphabet
     payload[i] = 97 + (i % 26)
 
 print(f"Completed string generation--Took {(time.time() - start):.2f} seconds.")
-
+print("Data to send: ")
+print(payload.decode(), end="\n\n\n")
 # Send this payload to the server using UDP
 # Source: https://wiki.python.org/moin/UdpCommunication
 # ---- socket.AF_INET is a macro for internet in general
@@ -53,10 +54,23 @@ segment_size=1500
 print("Client is sending data now...")
 while i < len(payload): # Send in bunches of 1.5KB (maximum for my system)
     segment = payload[i:min(i + segment_size, len(payload))]
-    bytes_sent = sock_udp.sendto(segment, (SERVER_IP, SERVER_PORT))
+    if i == 0: print(f"Time of first packet sent: {time.time()}")
+    sock_udp.sendto(segment, (SERVER_IP, SERVER_PORT))
     i += segment_size
 
+
+
 # UDP is connectionless so we don't use socket.listen()
+print("Server IP address: ", SERVER_IP)
 print("Client is listening for a response...")
-data, server_addr = sock_udp.recvfrom(4096) # buffer size is 4096 bytes (blocking)
-print(data.decode())
+sock_udp.settimeout(1)
+while True:
+    try:
+        sock_udp.sendto("STOP".encode(), (SERVER_IP, SERVER_PORT))
+        data, server_addr = sock_udp.recvfrom(4096) # buffer size is 4096 bytes (blocking)
+        print(data.decode())
+        break
+    except:
+        continue
+
+print("Client process completed iPerfectly!")
