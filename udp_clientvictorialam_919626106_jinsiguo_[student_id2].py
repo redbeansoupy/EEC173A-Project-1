@@ -42,6 +42,7 @@ for i in range(size_mb * 1000000): # For fun, fill this with lowercase alphabet
 print(f"Completed string generation--Took {(time.time() - start):.2f} seconds.")
 print("Data to send: ")
 print(payload.decode(), end="\n\n\n")
+
 # Send this payload to the server using UDP
 # Source: https://wiki.python.org/moin/UdpCommunication
 # ---- socket.AF_INET is a macro for internet in general
@@ -52,13 +53,14 @@ sock_udp.bind((CLIENT_IP, CLIENT_PORT))
 i = 0
 segment_size=1500
 print("Client is sending data now...")
+
+sock_udp.sendto("START".encode(), (SERVER_IP, SERVER_PORT)) # Send start message
+print(f"Time of first packet sent: {time.time()}")
+
 while i < len(payload): # Send in bunches of 1.5KB (maximum for my system)
     segment = payload[i:min(i + segment_size, len(payload))]
-    if i == 0: print(f"Time of first packet sent: {time.time()}")
     sock_udp.sendto(segment, (SERVER_IP, SERVER_PORT))
     i += segment_size
-
-
 
 # UDP is connectionless so we don't use socket.listen()
 print("Server IP address: ", SERVER_IP)
