@@ -40,8 +40,6 @@ for i in range(size_mb * 1000000): # For fun, fill this with lowercase alphabet
     payload[i] = 97 + (i % 26)
 
 print(f"Completed string generation--Took {(time.time() - start):.2f} seconds.")
-print("Data to send: ")
-print(payload.decode(), end="\n\n\n")
 
 # Send this payload to the server using UDP
 # Source: https://wiki.python.org/moin/UdpCommunication
@@ -53,6 +51,7 @@ sock_udp.bind((CLIENT_IP, CLIENT_PORT))
 i = 0
 segment_size=1500
 print("Client is sending data now...")
+print("CLIENT METADATA: IP Address: ", CLIENT_IP, "; Port: ", CLIENT_PORT)
 
 sock_udp.sendto("START".encode(), (SERVER_IP, SERVER_PORT)) # Send start message
 print(f"Time of first packet sent: {time.time()}")
@@ -62,8 +61,9 @@ while i < len(payload): # Send in bunches of 1.5KB (maximum for my system)
     sock_udp.sendto(segment, (SERVER_IP, SERVER_PORT))
     i += segment_size
 
+print("Amount of data sent (bytes): ", len(payload))
 # UDP is connectionless so we don't use socket.listen()
-print("Server IP address: ", SERVER_IP)
+
 print("Client is listening for a response...")
 sock_udp.settimeout(1)
 while True:

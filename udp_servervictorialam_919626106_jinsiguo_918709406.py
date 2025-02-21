@@ -11,13 +11,14 @@ SERVER_PORT = 5555  # arbitrarily chosen socket
 sock_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM);
 sock_udp.bind((SERVER_IP, SERVER_PORT))
 
-start, end = 0
+start = 0; end = 0
 sizes = []
 payload = []
 src_addr = 0
 first_time = 0
 
 print("Server is receiving data now...")
+print("SERVER METADTA: IP address: ", SERVER_IP, "; Port: ", SERVER_PORT)
 # Receive the START message
 data, src_addr = sock_udp.recvfrom(4096)
 assert data == b"START"
@@ -42,8 +43,6 @@ msg_str = f"Throughput: {(throughput / 1000):.3f} Kilobytes per second"
 
 sock_udp.sendto(msg_str.encode(), src_addr)
 
-print("Data received: ")
-print(''.join(payload), end="\n\n")
 print(f"Time that first packet was received: {start}")
 print("Client IP address: ", src_addr[0])
 print("Size of data received (bytes): ", total_data)
