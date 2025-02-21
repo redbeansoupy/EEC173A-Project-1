@@ -1,12 +1,12 @@
 # Project #1 Report – Part 1: iPerf Server
 
 ## Running our code
-Please open two terminal windows and run ```python3 udp_clientvictorialam_919626106_jinsiguo_[student_id2].py``` on one window then ```python3 udp_servervictorialam_919626106_jinsiguo_[student_id2].py <size in MB>``` in the other window. The information that is required according to the document is all listed at the end of execution for readability. 
+Please open two terminal windows and run ```python3 udp_clientvictorialam_919626106_jinsiguo_918709406.py``` on one window then ```python3 udp_servervictorialam_919626106_jinsiguo_918709406.py <size in MB>``` in the other window. The information that is required according to the document is all listed at the end of execution for readability. 
 
 ## Original Code
 The code that we wrote without using ChatGPT (though we did use the Google AI assistant for smaller-scale implementation questions) already worked well and the client and server were able to communicate. However, something that we had trouble solving was how to include the entire data packet in the throughput calculation.
 
-Client:
+udp_clientvictorialam_919626106_jinsiguo_918709406.py:
 ```python
 import socket
 import sys
@@ -40,8 +40,7 @@ for i in range(size_mb * 1000000): # For fun, fill this with lowercase alphabet
     payload[i] = 97 + (i % 26)
 
 print(f"Completed string generation--Took {(time.time() - start):.2f} seconds.")
-print("Data to send: ")
-print(payload.decode(), end="\n\n\n")
+
 # Send this payload to the server using UDP
 # Source: https://wiki.python.org/moin/UdpCommunication
 sock_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -50,6 +49,7 @@ sock_udp.bind((CLIENT_IP, CLIENT_PORT))
 i = 0
 segment_size=1500
 print("Client is sending data now...")
+print("CLIENT METADATA: IP Address: ", CLIENT_IP, "; Port: ", CLIENT_PORT)
 # Split up the data into chunks
 while i < len(payload): # Send in bunches of 1.5KB (maximum for my system)
     segment = payload[i:min(i + segment_size, len(payload))]
@@ -76,7 +76,7 @@ while True:
 print("Client process completed iPerfectly!")
 ```
 
-Server:
+udp_servervictorialam_919626106_jinsiguo_918709406.py:
 ```python
 import socket
 import time
@@ -93,6 +93,7 @@ payload = []
 src_addr = 0
 first_time = 0
 print("Server is receiving data now...")
+print("SERVER METADTA: IP address: ", SERVER_IP, "; Port: ", SERVER_PORT)
 while True:
     data, src_addr = sock_udp.recvfrom(4096) # BLOCKING function call
     if data == b"STOP": 
@@ -116,8 +117,6 @@ msg_str = f"Throughput: {(throughput / 1000):.3f} Kilobytes per second"
 
 sock_udp.sendto(msg_str.encode(), src_addr)
 
-print("Data received: ")
-print(''.join(payload), end="\n\n")
 print(f"Time that first packet was received: {first_time}")
 print("Client IP address: ", src_addr[0])
 print("Size of data received (bytes): ", total_data)
@@ -134,7 +133,7 @@ Our problem that not all of the data was included in the throughput calculation 
 ## Edited code using LLM
 Inspired by the way ChatGPT used a message to start communication before sending the actual payload, we added a message to start the server's size summation and time records. 
 
-udp_clientvictorialam_919626106_jinsiguo_[student_id2].py:
+udp_clientvictorialam_919626106_jinsiguo_918709406.py:
 ```python
 import socket
 import sys
@@ -168,8 +167,6 @@ for i in range(size_mb * 1000000): # For fun, fill this with lowercase alphabet
     payload[i] = 97 + (i % 26)
 
 print(f"Completed string generation--Took {(time.time() - start):.2f} seconds.")
-print("Data to send: ")
-print(payload.decode(), end="\n\n\n")
 
 # Send this payload to the server using UDP
 # Source: https://wiki.python.org/moin/UdpCommunication
@@ -181,6 +178,7 @@ sock_udp.bind((CLIENT_IP, CLIENT_PORT))
 i = 0
 segment_size=1500
 print("Client is sending data now...")
+print("CLIENT METADATA: IP Address: ", CLIENT_IP, "; Port: ", CLIENT_PORT)
 
 sock_udp.sendto("START".encode(), (SERVER_IP, SERVER_PORT)) # Send start message
 print(f"Time of first packet sent: {time.time()}")
@@ -190,8 +188,9 @@ while i < len(payload): # Send in bunches of 1.5KB (maximum for my system)
     sock_udp.sendto(segment, (SERVER_IP, SERVER_PORT))
     i += segment_size
 
+print("Amount of data sent (bytes): ", len(payload))
 # UDP is connectionless so we don't use socket.listen()
-print("Server IP address: ", SERVER_IP)
+
 print("Client is listening for a response...")
 sock_udp.settimeout(1)
 while True:
@@ -206,7 +205,7 @@ while True:
 print("Client process completed iPerfectly!")
 ```
 
-udp_servervictorialam_919626106_jinsiguo_[student_id2].py:
+udp_servervictorialam_919626106_jinsiguo_918709406.py:
 ```python
 import socket
 import time
@@ -217,13 +216,14 @@ SERVER_PORT = 5555  # arbitrarily chosen socket
 sock_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM);
 sock_udp.bind((SERVER_IP, SERVER_PORT))
 
-start, end = 0
+start = 0; end = 0
 sizes = []
 payload = []
 src_addr = 0
 first_time = 0
 
 print("Server is receiving data now...")
+print("SERVER METADTA: IP address: ", SERVER_IP, "; Port: ", SERVER_PORT)
 # Receive the START message
 data, src_addr = sock_udp.recvfrom(4096)
 assert data == b"START"
@@ -248,8 +248,6 @@ msg_str = f"Throughput: {(throughput / 1000):.3f} Kilobytes per second"
 
 sock_udp.sendto(msg_str.encode(), src_addr)
 
-print("Data received: ")
-print(''.join(payload), end="\n\n")
 print(f"Time that first packet was received: {start}")
 print("Client IP address: ", src_addr[0])
 print("Size of data received (bytes): ", total_data)
@@ -257,3 +255,29 @@ print("Time taken to receive (seconds): ", total_time)
 
 print("Server process completed iPerfectly!")
 ```
+
+## Actual output from this code (Sending 25MB):
+
+Server:
+```
+Server is receiving data now...
+SERVER METADTA: IP address:  127.0.0.1 ; Port:  5555
+Time that first packet was received: 1740105380.246206
+Client IP address:  127.0.0.1
+Size of data received (bytes):  24500500
+Time taken to receive (seconds):  0.09058976173400879
+Server process completed iPerfectly!
+```
+Client:
+```
+Completed string generation--Took 4.43 seconds.
+Client is sending data now...
+CLIENT METADATA: IP Address:  127.0.0.1 ; Port:  7777
+Time of first packet sent: 1740105380.2459898
+Amount of data sent (bytes):  25000000
+Client is listening for a response...
+Throughput: 270455.508 Kilobytes per second
+Client process completed iPerfectly!
+```
+
+As shown in these outputs, the amount of data received was less than the amount of data sent. In the shown outputs, it looks like 499500 bytes were lost, which was 333 1.5KB-sized packets. The metric that can describe this is packet loss, and in this case, the packet loss is 333. This happens because UDP is a best-effort service with no reliability guarantees. Packets may or may not make it over the link without errors or without getting lost, and UDP does not attempt to recover lost packets.
