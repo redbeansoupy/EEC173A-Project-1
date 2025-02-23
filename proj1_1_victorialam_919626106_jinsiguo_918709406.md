@@ -1,7 +1,17 @@
 # Project #1 Report – Part 1: iPerf Server
 
 ## Running our code
-Please open two terminal windows and run ```python3 udp_clientvictorialam_919626106_jinsiguo_918709406.py``` on one window then ```python3 udp_servervictorialam_919626106_jinsiguo_918709406.py <size in MB>``` in the other window. The information that is required according to the document is all listed at the end of execution for readability. 
+Please open two terminal windows and run 
+```
+python3 udp_servervictorialam_919626106_jinsiguo_[student_id2].py
+``` 
+on one window then 
+```
+python3 udp_clientvictorialam_919626106_jinsiguo_[student_id2].py <size in bytes>
+e.g.
+python3 udp_clientvictorialam_919626106_jinsiguo_[student_id2].py 25
+```
+in the other window. The information that is required according to the document is all listed at the end of execution for readability. 
 
 ## Original Code
 The code that we wrote without using ChatGPT (though we did use the Google AI assistant for smaller-scale implementation questions) already worked well and the client and server were able to communicate. However, something that we had trouble solving was how to include the entire data packet in the throughput calculation.
