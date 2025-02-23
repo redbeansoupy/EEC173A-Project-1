@@ -3,13 +3,13 @@
 ## Running our code
 Please open two terminal windows and run 
 ```
-python3 udp_servervictorialam_919626106_jinsiguo_[student_id2].py
+python3 udp_servervictorialam_919626106_jinsiguo_918709406.py
 ``` 
 on one window then 
 ```
-python3 udp_clientvictorialam_919626106_jinsiguo_[student_id2].py <size in bytes>
+python3 udp_clientvictorialam_919626106_jinsiguo_918709406.py <size in bytes>
 e.g.
-python3 udp_clientvictorialam_919626106_jinsiguo_[student_id2].py 25
+python3 udp_clientvictorialam_919626106_jinsiguo_918709406.py 25
 ```
 in the other window. The information that is required according to the document is all listed at the end of execution for readability. 
 
